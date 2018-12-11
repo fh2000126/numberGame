@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .map {
+        width: 480px;
+        height: 480px;
+        background-color: yellow;
+        position: absolute;
+        left: 50%;
+        margin-left: -240px;
+    }
+    .map ul {
+        margin: 0;
+        padding: 0;
+    }
+    .map ul li {
+        width: 150px;
+        height: 150px;
+        float: left;
+        list-style: none;
+        font-size: 40px;
+        text-align: center;
+        line-height: 150px;
+        border: 5px solid white;
+    }
+    .star{
+        height: 50px;
+        width: 100px;
+        font-size: 30px;
+        position: absolute;
+        left: 50%;
+        margin-left: -50px;
+        top: 500px;
+    }
+    .game{
+        position: absolute;
+        width: 300px;
+        top: 100px;
+        left: 15%;
+        font-size: 20px;
+        background-color: skyblue;
+    }
+    .time {
+        position: absolute;
+        font-size: 30px ;
+        left: 70%;
+        top: 180px;
+        width: 70px;
+        height: 40px;
+        background-color: pink;
+    }
+    .time p{
+        float: left;
+        margin: 0;
+        padding: 0;
+        margin-left: 13px;
+    }
+    .time span{
+        float: left;
+    }
+</style>
+<body>
+<div class="map">
+    <ul>
+        <li id="1" class="first">1</li>
+        <li id="2" class="first">2</li>
+        <li id="3" class="first">3</li>
+        <li id="5" class="two">4</li>
+        <li id="6" class="two">5</li>
+        <li id="7" class="two">6</li>
+        <li id="9" class="three">7</li>
+        <li id="10"  class="three">8</li>
+        <li id="11"  class="three"></li>
+    </ul>
+</div>
+<button class="star">开始</button>
+<div class="game">
+    <p>游戏说明：点击开始即可随机打乱数字,开始计时,点击空白格附近的有数字的方块,可以使得空白方块与点击的方块交换位置！<br>
+        <b>通关目标:</b>实现左上角到右下角的数字排序为1,2,3,4,5,6,7,8!
+    </p>
+</div>
+<div class="time"><p>0</p><span>s</span></div>
+<script src="jquery-1.12.4.js"></script>
+<script>
+    $(function () {
+        $("li").on("click",function () {
+            var id=this.id;
+            move(id);
+            function move(id) {
+                var temp=id;
+                var tempValue=document.getElementById(id).innerText;
+                var arrId=[1,2,3,5,6,7,9,10,11];
+                id=parseInt(id);
+                var moveID=[id+1,id-1,id+4,id-4];
+                for (var i=0;i<moveID.length;i++){
+                    if (arrId.indexOf(moveID[i])>=0){
+                        if (!document.getElementById(moveID[i]).innerText){
+                                document.getElementById(moveID[i]).innerText=tempValue;
+                                document.getElementById(temp).innerText="";
+                            }
+                        }
+                    }
+                checkResult();
+            }
+        });
+        function checkResult() {
+           var arrid = [1,2,3,5,6,7,9,10];
+           var pass=[1,2,3,4,5,6,7,8];
+           var isAll=true;
+           for (var i = 0; i <pass.length; i++) {
+                var temp = document.getElementById(arrid[i]).innerHTML;
+               if (!(pass[i]==temp)) {
+                    isAll=false;
+                }
+            }
+            if (isAll){
+                alert("YOU  WIN");
+                clearInterval(timeID);
+                $(".time p")[0].innerText=0
+            }
+        }
+        var timeID=null;
+        $(".star").on("click",function () {
+            $("#11").text("");
+            clearInterval(timeID);
+            $(".time p")[0].innerText=0;
+            timeID=setInterval(function () {
+                $(".time p")[0].innerText++;
+            },1000);
+            //  //随机八个数方法一
+            //  var arrid = [1,2, 3, 4, 5, 6, 7, 8];
+            // var arr = [];
+            //  while(arr.length<8){
+            //      var  ran= Math.round(Math.random()*10)+1;
+            //      if(arr.indexOf(ran)<0 && ran<9){
+            //          arr.push(ran);
+            //      }
+            //  }
+            //  for(i=0;i<arrid.length;i++) {
+            //      document.getElementById(arrid[i]).innerHTML = arr[i];
+            //  }
+            // 随机八个数方法二
+            arrid = [1,2, 3, 5, 6, 7, 9,10,11];
+             arr = [1,2, 3, 4, 5, 6, 7, 8];
+             while (1){
+                 arr.sort(function (a, b) {   //function(a, b） 是一个排序指针方法
+                     return Math.random() -0.5;  //  a -b 从小到大， b - a 从大到小 ，Math.random()  产生一个随机数，大于0.5 数组从小到大，小于0.5，数组从大到小排。
+                 });
+                 if (checkRandomIsValid()){
+                     break;
+                 }
+             }
+            for(i=0;i<arr.length;i++) {
+                 document.getElementById(arrid[i]).innerHTML = arr[i];
+             };
+        });
+        //逆数序算法
+        function checkRandomIsValid() {
+            var count = 0;
+            for (var i = 0; i < 9; i++) {
+                for (var j = i + 1; j < 9; j++) {
+                    if (arr[j] < arr[i]) {
+                        count++;
+                    }
+                }
+            }
+            return count % 2 === 0;
+        }
+    });
+
+</script>
+</body>
+</html>
